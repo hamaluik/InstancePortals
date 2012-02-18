@@ -6,6 +6,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldedit.bukkit.WorldEditAPI;
+
 import ru.tehkode.permissions.PermissionManager;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
@@ -13,12 +16,14 @@ public class InstancePortals extends JavaPlugin {
 	// load the minecraft logger
 	Logger log = Logger.getLogger("Minecraft");
 
-	// keep track of permissions
+	// APIs
 	public PermissionManager permissions = null;
+    protected WorldEditAPI worldEditAPI = null;
 
 	public void onEnable() {
-		// set up permissions
+		// set up APIs
 		this.setupPermissions();
+		this.checkForWorldEdit();
 		
 		
 		log("plugin enabled!");
@@ -65,4 +70,16 @@ public class InstancePortals extends JavaPlugin {
 			return player.isOp();
 		}
 	}
+	
+	// load worldedit
+    private void checkForWorldEdit() {
+        if (this.getServer().getPluginManager().getPlugin("WorldEdit") != null) {
+            this.worldEditAPI = new WorldEditAPI((WorldEditPlugin) this.getServer().getPluginManager().getPlugin("WorldEdit"));
+        }
+    }
+    
+    // access the worldedit API
+    public WorldEditAPI getWEAPI() {
+        return this.worldEditAPI;
+    }
 }
