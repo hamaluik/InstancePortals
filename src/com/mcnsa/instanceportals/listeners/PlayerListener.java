@@ -74,20 +74,16 @@ public class PlayerListener implements Listener {
         
         Vector min = r.getMinimumPoint();
         Vector max = r.getMaximumPoint();
-        max.add(new Vector(1, 1, 1));
         
-        if(!(l.getX() >= min.getX() && l.getX() <= max.getX())) {
-        	return false;
+        if (!(l.getBlockX() >= min.getBlockX() && l.getBlockX() <= max.getBlockX())) {
+            return false;
         }
-        
-        if(!(l.getY() >= min.getY() && l.getY() <= max.getY())) {
-        	return false;
+        if (!(l.getBlockZ() >= min.getBlockZ() && l.getBlockZ() <= max.getBlockZ())) {
+            return false;
         }
-        
-        if(!(l.getZ() >= min.getZ() && l.getZ() <= max.getZ())) {
-        	return false;
-        }
-        
+        if (!(l.getBlockY() >= min.getBlockY() && l.getBlockY() <= max.getBlockY())) {
+            return false;
+        }        
         return true;
     }
 }
