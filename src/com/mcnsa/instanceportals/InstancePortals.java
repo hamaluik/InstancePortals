@@ -8,6 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.mcnsa.instanceportals.listeners.PlayerListener;
 import com.mcnsa.instanceportals.util.CommandManager;
+import com.mcnsa.instanceportals.util.TransportManager;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.WorldEditAPI;
 
@@ -27,6 +28,9 @@ public class InstancePortals extends JavaPlugin {
 
 	// keep track of listeners
 	public PlayerListener playerListener = null;
+	
+	// and internal things
+	public TransportManager transportManager = null;
 
 	public void onEnable() {
 		// set up APIs
@@ -36,6 +40,9 @@ public class InstancePortals extends JavaPlugin {
 		// setup things
 		commandManager = new CommandManager(this);
 
+		// set up internal things
+		transportManager = new TransportManager(this);
+		
 		// set up listeners
 		playerListener = new PlayerListener(this);
 		
