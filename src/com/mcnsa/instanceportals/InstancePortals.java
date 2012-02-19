@@ -6,6 +6,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.mcnsa.instanceportals.listeners.PlayerListener;
+import com.mcnsa.instanceportals.util.CommandManager;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.WorldEditAPI;
 
@@ -20,11 +22,22 @@ public class InstancePortals extends JavaPlugin {
 	public PermissionManager permissions = null;
     protected WorldEditAPI worldEditAPI = null;
 
+	// and commands
+	public CommandManager commandManager = null;
+
+	// keep track of listeners
+	public PlayerListener playerListener = null;
+
 	public void onEnable() {
 		// set up APIs
 		this.setupPermissions();
 		this.checkForWorldEdit();
 		
+		// setup things
+		commandManager = new CommandManager(this);
+
+		// set up listeners
+		playerListener = new PlayerListener(this);
 		
 		log("plugin enabled!");
 	}
@@ -64,7 +77,7 @@ public class InstancePortals extends JavaPlugin {
 	// if permissions are down, default to OP status.
 	public boolean hasPermission(Player player, String permission) {
 		if(permissions != null) {
-			return permissions.has(player, "mcnsachat2." + permission);
+			return permissions.has(player, "instanceportals." + permission);
 		}
 		else {
 			return player.isOp();
