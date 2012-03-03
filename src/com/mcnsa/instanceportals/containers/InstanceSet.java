@@ -17,12 +17,23 @@ public class InstanceSet {
 	public Location exit;
 	public Integer maxPlayers = new Integer(1);
 	
+	public InstanceSet(InstancePortals instance, String _name) {
+		plugin = instance;
+		name = _name;
+		// TODO: track world names on instance sets
+		world = "world";
+	}
+	
 	public InstanceSet(InstancePortals instance, String _name, Integer _max) {
 		plugin = instance;
 		name = _name;
 		maxPlayers = _max;
 		// TODO: track world names on instance sets
 		world = "world";
+	}
+	
+	public void setMax(Integer _max) {
+		maxPlayers = _max;
 	}
 	
 	public void setEntrance(PortalRegion _entrance) {

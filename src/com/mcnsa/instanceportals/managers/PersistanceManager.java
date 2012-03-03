@@ -17,6 +17,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 import com.mcnsa.instanceportals.InstancePortals;
+import com.mcnsa.instanceportals.containers.Instance;
+import com.mcnsa.instanceportals.containers.InstanceSet;
 import com.mcnsa.instanceportals.containers.Portal;
 import com.mcnsa.instanceportals.containers.PortalRegion;
 
@@ -199,6 +201,68 @@ public class PersistanceManager {
 					}
 					catch(Exception e) {
 						plugin.error("failed to read portal: " + e.getMessage());
+					}
+				}
+				
+				// now grab the instance sets
+				HashMap<String, HashMap<String, Object>> instanceSets = (HashMap<String, HashMap<String, Object>>)obj.get("instanceSets");
+				// iterate over all the instance sets
+				for(String instanceSetName: instanceSets.keySet()) {
+					try {
+						// create an instance set
+						InstanceSet instanceSet = new InstanceSet(plugin, instanceSetName);
+						
+						// get the portal and exit locations
+						ArrayList<Long> minList = (ArrayList<Long>)instanceSets.get(instanceSetName).get("min");
+						ArrayList<Long> maxList = (ArrayList<Long>)instanceSets.get(instanceSetName).get("max");
+						ArrayList<Double> exitList = (ArrayList<Double>)instanceSets.get(instanceSetName).get("exit");
+	
+						// TODO: fix the world names
+						Location min = new Location(plugin.getServer().getWorld("world"), minList.get(0).doubleValue(), minList.get(1).doubleValue(), minList.get(2).doubleValue());
+						Location max = new Location(plugin.getServer().getWorld("world"), maxList.get(0).doubleValue(), maxList.get(1).doubleValue(), maxList.get(2).doubleValue());
+						Location exit = new Location(plugin.getServer().getWorld("world"), exitList.get(0), exitList.get(1), exitList.get(2), exitList.get(3).floatValue(), (float)exitList.get(4).floatValue());
+						
+						// ok, create the portal region
+						PortalRegion region = new PortalRegion(plugin, "world", min, max);
+						
+						// now set things in the portal
+						instanceSet.entrance = region;
+						instanceSet.exit = exit;
+						
+						// now load all of the instances
+						ArrayList<Object> instanceList = (ArrayList<Object>)instanceSets.get(instanceSetName).get("instances");
+						for(int i = 0; i < instanceList.size(); i++) {
+							HashMap<String, Object> instanceData = (HashMap<String, Object>)instanceList.get(i);
+							
+							// ok, create an instance
+							Instance instance = new Instance(instanceSet);
+							
+							// get the portal and arrival locations
+							ArrayList<Long> instanceMinList = (ArrayList<Long>)instanceData.get("min");
+							ArrayList<Long> instanceMaxList = (ArrayList<Long>)instanceData.get("max");
+							ArrayList<Double> arrivalList = (ArrayList<Double>)instanceData.get("arrival");
+		
+							// TODO: fix the world names
+							Location instanceMin = new Location(plugin.getServer().getWorld("world"), instanceMinList.get(0).doubleValue(), instanceMinList.get(1).doubleValue(), instanceMinList.get(2).doubleValue());
+							Location instanceMax = new Location(plugin.getServer().getWorld("world"), instanceMaxList.get(0).doubleValue(), instanceMaxList.get(1).doubleValue(), instanceMaxList.get(2).doubleValue());
+							Location instanceArrival = new Location(plugin.getServer().getWorld("world"), arrivalList.get(0), exitList.get(1), arrivalList.get(2), arrivalList.get(3).floatValue(), (float)arrivalList.get(4).floatValue());
+
+							// ok, create the portal region
+							PortalRegion instanceRegion = new PortalRegion(plugin, "world", instanceMin, instanceMax);
+							
+							// now setup the instance
+							instance.setArrival(instanceArrival);
+							instance.setDeparture(instanceRegion);
+							
+							// now add it to the instance set
+							instanceSet.addInstance(instance);
+						}
+						
+						// and track the instance set!
+						plugin.transportManager.addInstanceSet(instanceSet);
+					}
+					catch(Exception e) {
+						plugin.error("failed to read instance set: " + e.getMessage());
 					}
 				}
 			}
