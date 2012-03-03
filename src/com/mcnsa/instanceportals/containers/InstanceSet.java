@@ -11,6 +11,7 @@ import com.mcnsa.instanceportals.util.ColourHandler;
 public class InstanceSet {
 	private InstancePortals plugin;
 	public String name;
+	public String world;
 	public PortalRegion entrance;
 	public ArrayList<Instance> instances = new ArrayList<Instance>();
 	public Location exit;
@@ -20,6 +21,8 @@ public class InstanceSet {
 		plugin = instance;
 		name = _name;
 		maxPlayers = _max;
+		// TODO: track world names on instance sets
+		world = "world";
 	}
 	
 	public void setEntrance(PortalRegion _entrance) {

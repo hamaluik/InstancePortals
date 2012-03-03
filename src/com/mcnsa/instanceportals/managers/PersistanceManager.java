@@ -74,8 +74,76 @@ public class PersistanceManager {
 				portalsObj.put(plugin.transportManager.portals.get(i).name, portalObj);
 			}
 			
+			// now store instance sets!
+			JSONObject instanceSetsObj = new JSONObject();
+			for(int i = 0; i < plugin.transportManager.instanceSets.size(); i++) {
+				JSONObject instanceSetObj = new JSONObject();
+
+				// the entrance coords
+				JSONArray entranceMin = new JSONArray();
+				entranceMin.add(plugin.transportManager.instanceSets.get(i).entrance.min.getBlockX());
+				entranceMin.add(plugin.transportManager.instanceSets.get(i).entrance.min.getBlockY());
+				entranceMin.add(plugin.transportManager.instanceSets.get(i).entrance.min.getBlockZ());
+				JSONArray entranceMax = new JSONArray();
+				entranceMax.add(plugin.transportManager.instanceSets.get(i).entrance.max.getBlockX());
+				entranceMax.add(plugin.transportManager.instanceSets.get(i).entrance.max.getBlockY());
+				entranceMax.add(plugin.transportManager.instanceSets.get(i).entrance.max.getBlockZ());
+				
+				// and now the exit
+				JSONArray exit = new JSONArray();
+				exit.add(plugin.transportManager.instanceSets.get(i).exit.getX());
+				exit.add(plugin.transportManager.instanceSets.get(i).exit.getY());
+				exit.add(plugin.transportManager.instanceSets.get(i).exit.getZ());
+				exit.add(plugin.transportManager.instanceSets.get(i).exit.getYaw());
+				exit.add(plugin.transportManager.instanceSets.get(i).exit.getPitch());
+				
+				// now the instances
+				JSONArray instances = new JSONArray();
+				for(int j = 0; j < plugin.transportManager.instanceSets.get(i).instances.size(); j++) {
+					JSONObject instance = new JSONObject();
+					
+					// the departure coords
+					JSONArray instanceEntranceMin = new JSONArray();
+					instanceEntranceMin.add(plugin.transportManager.instanceSets.get(i).instances.get(j).departure.min.getBlockX());
+					instanceEntranceMin.add(plugin.transportManager.instanceSets.get(i).instances.get(j).departure.min.getBlockY());
+					instanceEntranceMin.add(plugin.transportManager.instanceSets.get(i).instances.get(j).departure.min.getBlockZ());
+					JSONArray instanceEntranceMax = new JSONArray();
+					instanceEntranceMax.add(plugin.transportManager.instanceSets.get(i).instances.get(j).departure.max.getBlockX());
+					instanceEntranceMax.add(plugin.transportManager.instanceSets.get(i).instances.get(j).departure.max.getBlockY());
+					instanceEntranceMax.add(plugin.transportManager.instanceSets.get(i).instances.get(j).departure.max.getBlockZ());
+					
+					// and now the exit
+					JSONArray instanceArrival = new JSONArray();
+					instanceArrival.add(plugin.transportManager.instanceSets.get(i).instances.get(j).arrival.getX());
+					instanceArrival.add(plugin.transportManager.instanceSets.get(i).instances.get(j).arrival.getY());
+					instanceArrival.add(plugin.transportManager.instanceSets.get(i).instances.get(j).arrival.getZ());
+					instanceArrival.add(plugin.transportManager.instanceSets.get(i).instances.get(j).arrival.getYaw());
+					instanceArrival.add(plugin.transportManager.instanceSets.get(i).instances.get(j).arrival.getPitch());
+					
+					// set up the instance
+					instance.put("min", instanceEntranceMin);
+					instance.put("max", instanceEntranceMax);
+					instance.put("arrival", instanceArrival);
+					
+					// and add it to the list
+					instances.add(instance);
+				}
+				
+				// now add everything to the instance set
+				//instanceSetObj.put("world", plugin.transportManager.portals.get(i).entrance.worldName);
+				instanceSetObj.put("min", entranceMin);
+				instanceSetObj.put("max", entranceMax);
+				instanceSetObj.put("exit", exit);
+				instanceSetObj.put("instances", instances);
+				instanceSetObj.put("maxPlayers", plugin.transportManager.instanceSets.get(i).maxPlayers);
+				
+				// and the object!
+				instanceSetsObj.put(plugin.transportManager.instanceSets.get(i).name, instanceSetObj);
+			}
+			
 			// and add everything to the head node
 			obj.put("portals", portalsObj);
+			obj.put("instanceSets", instanceSetsObj);
 			
 			// and save it!
 			out.print(obj);			
@@ -109,7 +177,7 @@ public class PersistanceManager {
 				for(String portalName: portals.keySet()) {
 					try {
 						Portal portal = new Portal(plugin, portalName);
-	
+
 						String worldName = (String)portals.get(portalName).get("world");
 						ArrayList<Long> minList = (ArrayList<Long>)portals.get(portalName).get("min");
 						ArrayList<Long> maxList = (ArrayList<Long>)portals.get(portalName).get("max");
