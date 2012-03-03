@@ -9,6 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.mcnsa.instanceportals.listeners.PlayerListener;
 import com.mcnsa.instanceportals.managers.CommandManager;
+import com.mcnsa.instanceportals.managers.ConfigManager;
 import com.mcnsa.instanceportals.managers.PersistanceManager;
 import com.mcnsa.instanceportals.managers.PlayerManager;
 import com.mcnsa.instanceportals.managers.TransportManager;
@@ -22,6 +23,9 @@ public class InstancePortals extends JavaPlugin {
 
 	// APIs
 	public PermissionManager permissions = null;
+	
+	// configuration
+	public ConfigManager config = null;
 
 	// and commands
 	public CommandManager commandManager = null;
@@ -42,12 +46,26 @@ public class InstancePortals extends JavaPlugin {
 		// set up APIs
 		this.setupPermissions();
 		
+		// load the config
+		config = new ConfigManager(this);
+		// load configuration
+		// and save it again (for defaults)
+		this.getConfig().options().copyDefaults(true);
+		if(!config.load(getConfig())) {
+			// shit
+			// BAIL
+			error("configuration failed - bailing");
+			getServer().getPluginManager().disablePlugin(this);
+		}
+		this.saveConfig();
+		config.load(getConfig());
+		
 		// setup things
 		commandManager = new CommandManager(this);
 		
 		// start the transport manager
 		transportManager = new TransportManager(this);
-		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, transportManager, 5, 5);
+		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, transportManager, config.options.updateTicks, config.options.updateTicks);
 		
 		playerManager = new PlayerManager(this);
 		
