@@ -31,6 +31,7 @@ public class Portal {
 				// teleport them to the exit
 				//plugin.debug("\ttransporting player to exit...");
 				players[i].teleport(exit);
+				players[i].setFallDistance(0f);
 			}
 		}
 	}

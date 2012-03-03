@@ -33,6 +33,17 @@ public class CommandManager {
 		registerCommand(new PortalDone(plugin));
 		registerCommand(new PortalDelete(plugin));
 		registerCommand(new PortalList(plugin));
+		registerCommand(new InstanceSetCreate(plugin));
+		registerCommand(new InstanceSetExit(plugin));
+		registerCommand(new InstanceSetCancel(plugin));
+		registerCommand(new InstanceSetDone(plugin));
+		registerCommand(new InstanceSetDelete(plugin));
+		registerCommand(new InstanceSetList(plugin));
+		registerCommand(new InstanceCreate(plugin));
+		registerCommand(new InstanceEntrance(plugin));
+		registerCommand(new InstanceCancel(plugin));
+		registerCommand(new InstanceDone(plugin));
+		//registerCommand(new InstanceList(plugin));
 		//plugin.debug("commands all registered!");
 	}
 
@@ -112,7 +123,7 @@ public class CommandManager {
 		
 		// they didn't use it properly! let them know!
 		//plugin.debug("command " + tokens[0] + " NOT handled successfully");
-		ColourHandler.sendMessage(player, "&cInvalid usage! &aCorrect usage: &6/" + commands.get(tokens[0]).alias + " &e" + commands.get(tokens[0]).usage + " &7(" + commands.get(tokens[0]).description + ")");
+		ColourHandler.sendMessage(player, "&cInvalid usage! &aCorrect usage: &3/" + commands.get(tokens[0]).alias + " &b" + commands.get(tokens[0]).usage + " &7(" + commands.get(tokens[0]).description + ")");
 		return true;
 	}
 	

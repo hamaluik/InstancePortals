@@ -7,9 +7,13 @@ import org.bukkit.entity.Player;
 
 public class Instance {
 	private InstanceSet parent;
-	private Location arrival;
-	private PortalRegion departure;
+	public Location arrival;
+	public PortalRegion departure;
 	private ArrayList<Player> players = new ArrayList<Player>();
+	
+	public Instance(InstanceSet _parent) {
+		parent = _parent;
+	}
 	
 	public Instance(InstanceSet _parent, Location _arrival, PortalRegion _departure) {
 		parent = _parent;
@@ -43,6 +47,7 @@ public class Instance {
 	public void bringPlayer(Player player) {
 		if(departure != null && !players.contains(player)) {
 			player.teleport(arrival);
+			player.setFallDistance(0f);
 			players.add(player);
 		}
 	}

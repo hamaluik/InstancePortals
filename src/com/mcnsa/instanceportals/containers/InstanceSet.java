@@ -10,14 +10,16 @@ import com.mcnsa.instanceportals.util.ColourHandler;
 
 public class InstanceSet {
 	private InstancePortals plugin;
-	private PortalRegion entrance;
-	private ArrayList<Instance> instances = new ArrayList<Instance>();
-	private Location exit;
-	private Integer maxPlayers = new Integer(1);
-	boolean ready = false;
+	public String name;
+	public PortalRegion entrance;
+	public ArrayList<Instance> instances = new ArrayList<Instance>();
+	public Location exit;
+	public Integer maxPlayers = new Integer(1);
 	
-	public InstanceSet(InstancePortals instance) {
+	public InstanceSet(InstancePortals instance, String _name, Integer _max) {
 		plugin = instance;
+		name = _name;
+		maxPlayers = _max;
 	}
 	
 	public void setEntrance(PortalRegion _entrance) {
@@ -54,10 +56,8 @@ public class InstanceSet {
 	}
 	
 	public void check() {
-		// update the ready flag
-		ready = !(entrance == null || exit == null || instances.size() == 0);
 		// and make sure the set is fully defined
-		if(!ready) return;
+		if(entrance == null || exit == null || instances.size() == 0) return;
 		
 		// loop through all the instances and see if a player is trying to leave
 		for(int i = 0; i < instances.size(); i++) {
@@ -88,8 +88,8 @@ public class InstanceSet {
 	
 	public void transportToExit(Player player) {
 		// make sure all our fields are valid
-		if(!ready || exit == null) return;
-		
+		if(exit == null) return;
 		player.teleport(exit);
+		player.setFallDistance(0f);
 	}
 }
