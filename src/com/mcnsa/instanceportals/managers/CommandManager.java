@@ -1,4 +1,4 @@
-package com.mcnsa.instanceportals.util;
+package com.mcnsa.instanceportals.managers;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
@@ -8,6 +8,9 @@ import java.util.HashMap;
 import org.bukkit.entity.Player;
 
 import com.mcnsa.instanceportals.commands.*;
+import com.mcnsa.instanceportals.util.ColourHandler;
+import com.mcnsa.instanceportals.util.Command;
+import com.mcnsa.instanceportals.util.CommandInfo;
 
 import com.mcnsa.instanceportals.InstancePortals;
 
@@ -24,8 +27,10 @@ public class CommandManager {
 		// develop the list of all commands here!
 		// TODO: dynamically load commands ALA CommandBook
 		//plugin.debug("registering commands...");
-		registerCommand(new CommandHelp(plugin));
-		registerCommand(new CommandDerp(plugin));
+		registerCommand(new PortalCreate(plugin));
+		registerCommand(new PortalExit(plugin));
+		registerCommand(new PortalCancel(plugin));
+		registerCommand(new PortalDone(plugin));
 		//plugin.debug("commands all registered!");
 	}
 

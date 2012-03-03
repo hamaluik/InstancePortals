@@ -2,4 +2,4 @@ name: InstancePortals
 main: com.mcnsa.instanceportals.InstancePortals
 version: 1.0.0
 author: FuzzyWuzzie
-depend: [PermissionsEx,WorldEdit]
+depend: [PermissionsEx]

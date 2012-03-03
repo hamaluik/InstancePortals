@@ -2,15 +2,16 @@ package com.mcnsa.instanceportals;
 
 import java.util.logging.Logger;
 
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.mcnsa.instanceportals.listeners.PlayerListener;
-import com.mcnsa.instanceportals.util.CommandManager;
-import com.mcnsa.instanceportals.util.TransportManager;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import com.sk89q.worldedit.bukkit.WorldEditAPI;
+import com.mcnsa.instanceportals.managers.CommandManager;
+import com.mcnsa.instanceportals.managers.PersistanceManager;
+import com.mcnsa.instanceportals.managers.PlayerManager;
+import com.mcnsa.instanceportals.managers.TransportManager;
 
 import ru.tehkode.permissions.PermissionManager;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
@@ -21,7 +22,6 @@ public class InstancePortals extends JavaPlugin {
 
 	// APIs
 	public PermissionManager permissions = null;
-    protected WorldEditAPI worldEditAPI = null;
 
 	// and commands
 	public CommandManager commandManager = null;
@@ -29,27 +29,40 @@ public class InstancePortals extends JavaPlugin {
 	// keep track of listeners
 	public PlayerListener playerListener = null;
 	
-	// and internal things
+	// the player manager
+	public PlayerManager playerManager = null;
+	
+	// and finally, the transport manager
 	public TransportManager transportManager = null;
+	
+	// keep track of portals between reloads
+	public PersistanceManager persistanceManager = null;
 
 	public void onEnable() {
 		// set up APIs
 		this.setupPermissions();
-		this.checkForWorldEdit();
 		
 		// setup things
 		commandManager = new CommandManager(this);
-
-		// set up internal things
+		
+		// start the transport manager
 		transportManager = new TransportManager(this);
+		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, transportManager, 5, 5);
+		
+		playerManager = new PlayerManager(this);
 		
 		// set up listeners
 		playerListener = new PlayerListener(this);
+		
+		// load persistance
+		persistanceManager = new PersistanceManager(this);
+		persistanceManager.readPersistance();
 		
 		log("plugin enabled!");
 	}
 	
 	public void onDisable() {
+		persistanceManager.writePersistance();
 		log("plugin disabled!");
 	}
 
@@ -90,16 +103,4 @@ public class InstancePortals extends JavaPlugin {
 			return player.isOp();
 		}
 	}
-	
-	// load worldedit
-    private void checkForWorldEdit() {
-        if (this.getServer().getPluginManager().getPlugin("WorldEdit") != null) {
-            this.worldEditAPI = new WorldEditAPI((WorldEditPlugin) this.getServer().getPluginManager().getPlugin("WorldEdit"));
-        }
-    }
-    
-    // access the worldedit API
-    public WorldEditAPI getWEAPI() {
-        return this.worldEditAPI;
-    }
 }

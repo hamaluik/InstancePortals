@@ -1,19 +1,13 @@
 package com.mcnsa.instanceportals.listeners;
 
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 import com.mcnsa.instanceportals.InstancePortals;
-import com.mcnsa.instanceportals.util.ColourHandler;
-import com.sk89q.worldedit.IncompleteRegionException;
-import com.sk89q.worldedit.LocalWorld;
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldedit.regions.Region;
 
 public class PlayerListener implements Listener {
 	InstancePortals plugin = null;
@@ -34,56 +28,19 @@ public class PlayerListener implements Listener {
 		}
 	}
 	
-	@EventHandler(priority = EventPriority.LOW)
-    public void playerMove(PlayerMoveEvent event) {
-        Player player = event.getPlayer(); // Grab Player
-        
-		// make sure they're not already in transport
-        if(plugin.transportManager.inTransport(player)) {
-        	plugin.debug("cancelled handle, player was already in transport!");
-        	return;
-        }
-		
-        Location loc = player.getLocation(); // Grab Location
-        
-		// get their selection
-		LocalWorld world = plugin.getWEAPI().getSession(player).getSelectionWorld();
-		Region region = null;
-		try {
-			region = plugin.getWEAPI().getSession(player).getSelection(world);
-		} catch (IncompleteRegionException e) {
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void playerInteract(PlayerInteractEvent event) {
+		if(event.isCancelled()) {
 			return;
 		}
 		
-		if(contains(region, loc)) {
-			ColourHandler.sendMessage(player, "You're in your selection!!");
-			// and queue them for transit!
-			plugin.transportManager.queueTransport(player, new Location(player.getWorld(), 0, 100, 0));
-			plugin.debug("player queued for transport!");
+		// we only care when they right click a block
+		if(event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+			// send it to the player manager
+			if(plugin.playerManager.onBlockSelect(event.getPlayer(), event.getClickedBlock())) {
+				// cancel it so nothing else happens
+				event.setCancelled(true);
+			}
 		}
-		
-		// and handle transports!
-		plugin.transportManager.handleTransports();
 	}
-
-    private boolean contains(Region r, Location l) {
-        if (!r.getWorld().getName().equals(l.getWorld().getName())) {
-        	plugin.debug("you're not in the right world");
-            return false;
-        }
-        
-        Vector min = r.getMinimumPoint();
-        Vector max = r.getMaximumPoint();
-        
-        if (!(l.getBlockX() >= min.getBlockX() && l.getBlockX() <= max.getBlockX())) {
-            return false;
-        }
-        if (!(l.getBlockZ() >= min.getBlockZ() && l.getBlockZ() <= max.getBlockZ())) {
-            return false;
-        }
-        if (!(l.getBlockY() >= min.getBlockY() && l.getBlockY() <= max.getBlockY())) {
-            return false;
-        }        
-        return true;
-    }
 }
