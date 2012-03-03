@@ -31,6 +31,8 @@ public class CommandManager {
 		registerCommand(new PortalExit(plugin));
 		registerCommand(new PortalCancel(plugin));
 		registerCommand(new PortalDone(plugin));
+		registerCommand(new PortalDelete(plugin));
+		registerCommand(new PortalList(plugin));
 		//plugin.debug("commands all registered!");
 	}
 

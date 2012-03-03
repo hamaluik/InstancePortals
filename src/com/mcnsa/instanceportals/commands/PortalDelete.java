@@ -7,10 +7,10 @@ import com.mcnsa.instanceportals.util.ColourHandler;
 import com.mcnsa.instanceportals.util.Command;
 import com.mcnsa.instanceportals.util.CommandInfo;
 
-@CommandInfo(alias = "pcreate", permission = "portal.create", usage = "<name>", description = "starts definition of a portal")
-public class PortalCreate implements Command {
+@CommandInfo(alias = "pdelete", permission = "portal.delete", usage = "<name>", description = "deletes portal <name>")
+public class PortalDelete implements Command {
 	private static InstancePortals plugin = null;
-	public PortalCreate(InstancePortals instance) {
+	public PortalDelete(InstancePortals instance) {
 		plugin = instance;
 	}
 	
@@ -24,15 +24,14 @@ public class PortalCreate implements Command {
 		// and make sure they have no spaces
 		String name = sArgs.trim().replace(" ", "_");
 		
-		// see if they're already defining a portal
-		if(plugin.playerManager.playerDefiningPortal(player)) {
-			// they are! tell them they can't do that!
-			ColourHandler.sendMessage(player, "&cYou can't start a new portal definition without cancelling your old one! Type /pcancel to do this!");
+		// ok, start the definition process!
+		if(!plugin.transportManager.portalExists(name)) {
+			ColourHandler.sendMessage(player, "&cThat portal doesn't exist!");
 			return true;
 		}
 		
-		// ok, start the definition process!
-		plugin.playerManager.startPortalDefinition(player, name);
+		plugin.transportManager.removePortal(name);
+		ColourHandler.sendMessage(player, "&2Portal '" + name + "' has been removed!");
 		
 		return true;
 	}

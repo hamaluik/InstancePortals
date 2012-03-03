@@ -23,9 +23,20 @@ public class PlayerManager {
 	}
 	
 	public void startPortalDefinition(Player player, String name) {
+		// firt make sure that portal doesn't exist
+		if(plugin.transportManager.portalExists(name)) {
+			ColourHandler.sendMessage(player, "&4Error - a portal already exists with that name!");
+			return;
+		}
+		
 		Portal portal = new Portal(plugin, name);
 		portal.entrance = new PortalRegion(plugin, player);
 		definingPortals.put(player, portal);
+		
+		// and inform them
+		ColourHandler.sendMessage(player, "&3To define the entrance portal, right click on the two corners of your portal");
+		ColourHandler.sendMessage(player, "&3To define where your portal will go to, stand in that spot and type &f/pexit");
+		ColourHandler.sendMessage(player, "&3When you're done, type &f/pdone&3. To cancel at any time, type &f/pcancel");
 	}
 	
 	public boolean onBlockSelect(Player player, Block block) {
@@ -105,5 +116,8 @@ public class PlayerManager {
 		
 		// and stop tracking it
 		definingPortals.remove(player);
+		
+		// and tell them about it!
+		ColourHandler.sendMessage(player, "&2You are no longer creating a portal!");
 	}
 }
