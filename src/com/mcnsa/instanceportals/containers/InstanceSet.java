@@ -9,11 +9,12 @@ import com.mcnsa.instanceportals.InstancePortals;
 import com.mcnsa.instanceportals.util.ColourHandler;
 
 public class InstanceSet {
-	private InstancePortals plugin;
+	public InstancePortals plugin;
 	public String name;
 	public String world;
 	public PortalRegion entrance;
 	public ArrayList<Instance> instances = new ArrayList<Instance>();
+	public Location bootEntrance;
 	public Location exit;
 	public Integer maxPlayers = new Integer(1);
 	
@@ -38,6 +39,10 @@ public class InstanceSet {
 	
 	public void setEntrance(PortalRegion _entrance) {
 		entrance = _entrance;
+	}
+	
+	public void setBootEntrance(Location _bootEntrance) {
+		bootEntrance = _bootEntrance;
 	}
 	
 	public void setExit(Location _exit) {
@@ -76,7 +81,7 @@ public class InstanceSet {
 		// loop through all the instances and see if a player is trying to leave
 		for(int i = 0; i < instances.size(); i++) {
 			// handle any departures from the instance
-			instances.get(i).checkAndHandleDepartures();
+			instances.get(i).checkAndHandleDepartures(false);
 		}
 		
 		// now loop through all online players
@@ -96,6 +101,7 @@ public class InstanceSet {
 				// ok, if we're here we have a valid instance
 				// teleport them to it!
 				instances.get(nextInstance).bringPlayer(players[i]);
+				plugin.transportManager.playerEnteredInstance(players[i], this);
 			}
 		}
 	}
@@ -103,7 +109,48 @@ public class InstanceSet {
 	public void transportToExit(Player player) {
 		// make sure all our fields are valid
 		if(exit == null) return;
+		
 		player.teleport(exit);
 		player.setFallDistance(0f);
+		
+		plugin.transportManager.playerLeftInstance(player);
+	}
+	
+	public void bootPlayer(Player player) {
+		// figure out which instance they're in
+		for(int i = 0; i < instances.size(); i++) {
+			if(instances.get(i).hasPlayer(player)) {
+				instances.get(i).bootPlayerFromInstance(player, true);
+				return;
+			}
+		}
+	}
+	
+	public void delistPlayer(Player player) {
+		// figure out which intance they're in
+		for(int i = 0; i < instances.size(); i++) {
+			if(instances.get(i).hasPlayer(player)) {
+				instances.get(i).bootPlayerFromInstance(player, false);
+				return;
+			}
+		}
+	}
+	
+	public void transportToEntrance(Player player) {
+		/*double meanX = (entrance.min.getX() + entrance.max.getX()) / 2d;
+		double meanY = (entrance.min.getY() + entrance.max.getY()) / 2d;
+		double meanZ = (entrance.min.getZ() + entrance.max.getZ()) / 2d;
+		
+		player.teleport(new Location(player.getWorld(), meanX, meanY, meanZ));*/
+		player.teleport(bootEntrance);
+		player.setFallDistance(0f);
+		
+		plugin.transportManager.playerLeftInstance(player);
+	}
+	
+	public void reset() {
+		for(int i = 0; i < instances.size(); i++) {
+			instances.get(i).reset();
+		}
 	}
 }

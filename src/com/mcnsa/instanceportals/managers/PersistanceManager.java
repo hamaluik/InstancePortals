@@ -99,6 +99,14 @@ public class PersistanceManager {
 				exit.add(plugin.transportManager.instanceSets.get(i).exit.getYaw());
 				exit.add(plugin.transportManager.instanceSets.get(i).exit.getPitch());
 				
+				// the boot exit
+				JSONArray bootEntrance = new JSONArray();
+				bootEntrance.add(plugin.transportManager.instanceSets.get(i).bootEntrance.getX());
+				bootEntrance.add(plugin.transportManager.instanceSets.get(i).bootEntrance.getY());
+				bootEntrance.add(plugin.transportManager.instanceSets.get(i).bootEntrance.getZ());
+				bootEntrance.add(plugin.transportManager.instanceSets.get(i).bootEntrance.getYaw());
+				bootEntrance.add(plugin.transportManager.instanceSets.get(i).bootEntrance.getPitch());
+				
 				// now the instances
 				JSONArray instances = new JSONArray();
 				for(int j = 0; j < plugin.transportManager.instanceSets.get(i).instances.size(); j++) {
@@ -114,6 +122,16 @@ public class PersistanceManager {
 					instanceEntranceMax.add(plugin.transportManager.instanceSets.get(i).instances.get(j).departure.max.getBlockY());
 					instanceEntranceMax.add(plugin.transportManager.instanceSets.get(i).instances.get(j).departure.max.getBlockZ());
 					
+					// the container coords
+					JSONArray instanceContainerMin = new JSONArray();
+					instanceContainerMin.add(plugin.transportManager.instanceSets.get(i).instances.get(j).container.min.getBlockX());
+					instanceContainerMin.add(plugin.transportManager.instanceSets.get(i).instances.get(j).container.min.getBlockY());
+					instanceContainerMin.add(plugin.transportManager.instanceSets.get(i).instances.get(j).container.min.getBlockZ());
+					JSONArray instanceContainerMax = new JSONArray();
+					instanceContainerMax.add(plugin.transportManager.instanceSets.get(i).instances.get(j).container.max.getBlockX());
+					instanceContainerMax.add(plugin.transportManager.instanceSets.get(i).instances.get(j).container.max.getBlockY());
+					instanceContainerMax.add(plugin.transportManager.instanceSets.get(i).instances.get(j).container.max.getBlockZ());
+					
 					// and now the exit
 					JSONArray instanceArrival = new JSONArray();
 					instanceArrival.add(plugin.transportManager.instanceSets.get(i).instances.get(j).arrival.getX());
@@ -125,6 +143,8 @@ public class PersistanceManager {
 					// set up the instance
 					instance.put("min", instanceEntranceMin);
 					instance.put("max", instanceEntranceMax);
+					instance.put("containerMin", instanceContainerMin);
+					instance.put("containerMax", instanceContainerMax);
 					instance.put("arrival", instanceArrival);
 					
 					// and add it to the list
@@ -136,6 +156,7 @@ public class PersistanceManager {
 				instanceSetObj.put("min", entranceMin);
 				instanceSetObj.put("max", entranceMax);
 				instanceSetObj.put("exit", exit);
+				instanceSetObj.put("bootEntrance", bootEntrance);
 				instanceSetObj.put("instances", instances);
 				instanceSetObj.put("maxPlayers", plugin.transportManager.instanceSets.get(i).maxPlayers);
 				
@@ -216,11 +237,13 @@ public class PersistanceManager {
 						ArrayList<Long> minList = (ArrayList<Long>)instanceSets.get(instanceSetName).get("min");
 						ArrayList<Long> maxList = (ArrayList<Long>)instanceSets.get(instanceSetName).get("max");
 						ArrayList<Double> exitList = (ArrayList<Double>)instanceSets.get(instanceSetName).get("exit");
+						ArrayList<Double> bootEntranceList = (ArrayList<Double>)instanceSets.get(instanceSetName).get("bootEntrace");
 	
 						// TODO: fix the world names
 						Location min = new Location(plugin.getServer().getWorld("world"), minList.get(0).doubleValue(), minList.get(1).doubleValue(), minList.get(2).doubleValue());
 						Location max = new Location(plugin.getServer().getWorld("world"), maxList.get(0).doubleValue(), maxList.get(1).doubleValue(), maxList.get(2).doubleValue());
 						Location exit = new Location(plugin.getServer().getWorld("world"), exitList.get(0), exitList.get(1), exitList.get(2), exitList.get(3).floatValue(), (float)exitList.get(4).floatValue());
+						Location bootEntrance = new Location(plugin.getServer().getWorld("world"), bootEntranceList.get(0), bootEntranceList.get(1), bootEntranceList.get(2), bootEntranceList.get(3).floatValue(), (float)bootEntranceList.get(4).floatValue());
 						
 						// ok, create the portal region
 						PortalRegion region = new PortalRegion(plugin, "world", min, max);
@@ -228,6 +251,7 @@ public class PersistanceManager {
 						// now set things in the portal
 						instanceSet.entrance = region;
 						instanceSet.exit = exit;
+						instanceSet.bootEntrance = bootEntrance;
 						
 						// now load all of the instances
 						ArrayList<Object> instanceList = (ArrayList<Object>)instanceSets.get(instanceSetName).get("instances");
@@ -240,19 +264,25 @@ public class PersistanceManager {
 							// get the portal and arrival locations
 							ArrayList<Long> instanceMinList = (ArrayList<Long>)instanceData.get("min");
 							ArrayList<Long> instanceMaxList = (ArrayList<Long>)instanceData.get("max");
+							ArrayList<Long> instanceContainerMinList = (ArrayList<Long>)instanceData.get("containerMin");
+							ArrayList<Long> instanceContainerMaxList = (ArrayList<Long>)instanceData.get("containerMax");
 							ArrayList<Double> arrivalList = (ArrayList<Double>)instanceData.get("arrival");
 		
 							// TODO: fix the world names
 							Location instanceMin = new Location(plugin.getServer().getWorld("world"), instanceMinList.get(0).doubleValue(), instanceMinList.get(1).doubleValue(), instanceMinList.get(2).doubleValue());
 							Location instanceMax = new Location(plugin.getServer().getWorld("world"), instanceMaxList.get(0).doubleValue(), instanceMaxList.get(1).doubleValue(), instanceMaxList.get(2).doubleValue());
+							Location instanceContainerMin = new Location(plugin.getServer().getWorld("world"), instanceContainerMinList.get(0).doubleValue(), instanceContainerMinList.get(1).doubleValue(), instanceContainerMinList.get(2).doubleValue());
+							Location instanceContainerMax = new Location(plugin.getServer().getWorld("world"), instanceContainerMaxList.get(0).doubleValue(), instanceContainerMaxList.get(1).doubleValue(), instanceContainerMaxList.get(2).doubleValue());
 							Location instanceArrival = new Location(plugin.getServer().getWorld("world"), arrivalList.get(0), exitList.get(1), arrivalList.get(2), arrivalList.get(3).floatValue(), (float)arrivalList.get(4).floatValue());
 
 							// ok, create the portal region
 							PortalRegion instanceRegion = new PortalRegion(plugin, "world", instanceMin, instanceMax);
+							PortalRegion instanceContainerRegion = new PortalRegion(plugin, "world", instanceContainerMin, instanceContainerMax);
 							
 							// now setup the instance
 							instance.setArrival(instanceArrival);
 							instance.setDeparture(instanceRegion);
+							instance.setContainer(instanceContainerRegion);
 							
 							// now add it to the instance set
 							instanceSet.addInstance(instance);

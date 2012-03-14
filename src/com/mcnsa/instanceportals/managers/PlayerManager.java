@@ -58,7 +58,7 @@ public class PlayerManager {
 			}
 			
 			// they're defining an instance
-			if(definingInstances.get(player).departure.nextIsMax()) {
+			/*if(definingInstances.get(player).departure.nextIsMax()) {
 				// change the max point!
 				definingInstances.get(player).departure.updateMax(block.getLocation());
 			}
@@ -73,7 +73,42 @@ public class PlayerManager {
 				
 				// now reorder the min and max
 				definingInstances.get(player).departure.properlyOrder();
+			}*/
+			
+			// see what they're defining
+			if(!definingInstances.get(player).container.portalDefined()) {
+				// need to define the container..
+				if(definingInstances.get(player).container.nextIsMax()) {
+					// change the max point!
+					definingInstances.get(player).container.updateMax(block.getLocation());
+				}
+				else {
+					// change the min point!
+					definingInstances.get(player).container.updateMin(block.getLocation());
+				}
+				ColourHandler.sendMessage(player, "&a(&f"+block.getLocation().getBlockX()+"&a,&f"+block.getLocation().getBlockY()+"&a,&f"+block.getLocation().getBlockZ()+"&a) has been registered as a corner of your container!");
 			}
+			else if(!definingInstances.get(player).departure.portalDefined()) {
+				// need to define the portal
+				if(definingInstances.get(player).departure.nextIsMax()) {
+					// change the max point!
+					definingInstances.get(player).departure.updateMax(block.getLocation());
+				}
+				else {
+					// change the min point!
+					definingInstances.get(player).departure.updateMin(block.getLocation());
+				}
+				ColourHandler.sendMessage(player, "&a(&f"+block.getLocation().getBlockX()+"&a,&f"+block.getLocation().getBlockY()+"&a,&f"+block.getLocation().getBlockZ()+"&a) has been registered as a corner of your portal!");
+			}
+			else {
+				// ok, they have it all defined!
+				ColourHandler.sendMessage(player, "&2Your portal entrance and container are now fully defined!");
+				
+				// now reorder the min and max
+				definingInstances.get(player).container.properlyOrder();
+				definingInstances.get(player).departure.properlyOrder();
+			}
+			
 			return true;
 		}
 		else if(definingInstanceSets.containsKey(player)) {
@@ -313,6 +348,16 @@ public class PlayerManager {
 		ColourHandler.sendMessage(player, "&2Your instance exit is now defined!");
 	}
 	
+	public void defineInstanceSetBoot(Player player) {
+		// make sure we're tracking the player
+		if(!definingInstanceSets.containsKey(player)) {
+			return;
+		}
+		
+		definingInstanceSets.get(player).bootEntrance = player.getLocation();
+		ColourHandler.sendMessage(player, "&2Your instance boot location is now defined!");
+	}
+	
 	public void endInstanceSetDefinition(Player player) {
 		// make sure we're tracking the player
 		if(!definingInstanceSets.containsKey(player)) {
@@ -326,6 +371,10 @@ public class PlayerManager {
 		}
 		if(definingInstanceSets.get(player).exit == null) {
 			ColourHandler.sendMessage(player, "&4Error - your instance set exit is not defined!");
+			return;
+		}
+		if(definingInstanceSets.get(player).bootEntrance == null) {
+			ColourHandler.sendMessage(player, "&4Error - your boot location is not defined!");
 			return;
 		}
 		if(definingInstanceSets.get(player).instances.size() < 1) {

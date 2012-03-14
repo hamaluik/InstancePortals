@@ -1,6 +1,9 @@
 package com.mcnsa.instanceportals.managers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.bukkit.entity.Player;
 
 import com.mcnsa.instanceportals.InstancePortals;
 import com.mcnsa.instanceportals.containers.InstanceSet;
@@ -11,6 +14,9 @@ public class TransportManager implements Runnable {
 	private InstancePortals plugin;
 	public ArrayList<Portal> portals = new ArrayList<Portal>();
 	public ArrayList<InstanceSet> instanceSets = new ArrayList<InstanceSet>();
+	
+	// keep track of who's in an instance so we can get them out
+	public HashMap<Player, InstanceSet> playersInInstances = new HashMap<Player, InstanceSet>();
 	
 	public TransportManager(InstancePortals instance) {
 		plugin = instance;
@@ -40,6 +46,29 @@ public class TransportManager implements Runnable {
 		}
 	}
 	
+	public boolean playerInInstance(Player player) {
+		return playersInInstances.containsKey(player);
+	}
+	
+	public InstanceSet playerInstanceSet(Player player) {
+		if(!playersInInstances.containsKey(player)) {
+			return null;
+		}
+		return playersInInstances.get(player);
+	}
+	
+	public void playerEnteredInstance(Player player, InstanceSet set) {
+		if(!playersInInstances.containsKey(player)) {
+			playersInInstances.put(player, set);
+		}
+	}
+	
+	public void playerLeftInstance(Player player) {
+		if(playersInInstances.containsKey(player)) {
+			playersInInstances.remove(player);
+		}
+	}
+	
 	public boolean instanceSetExists(String name) {
 		for(int i = 0; i < instanceSets.size(); i++) {
 			if(instanceSets.get(i).name.equals(name)) {
@@ -61,6 +90,12 @@ public class TransportManager implements Runnable {
 				instanceSets.remove(i);
 				return;
 			}
+		}
+	}
+	
+	public void reset() {
+		for(int i = 0; i < instanceSets.size(); i++) {
+			instanceSets.get(i).reset();
 		}
 	}
 

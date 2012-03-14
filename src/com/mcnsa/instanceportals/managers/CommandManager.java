@@ -43,6 +43,7 @@ public class CommandManager {
 		registerCommand(new InstanceEntrance(plugin));
 		registerCommand(new InstanceCancel(plugin));
 		registerCommand(new InstanceDone(plugin));
+		registerCommand(new InstanceSetReset(plugin));
 		//registerCommand(new InstanceList(plugin));
 		//plugin.debug("commands all registered!");
 	}

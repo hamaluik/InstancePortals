@@ -80,6 +80,7 @@ public class InstancePortals extends JavaPlugin {
 	}
 	
 	public void onDisable() {
+		transportManager.reset();
 		persistanceManager.writePersistance();
 		log("plugin disabled!");
 	}
