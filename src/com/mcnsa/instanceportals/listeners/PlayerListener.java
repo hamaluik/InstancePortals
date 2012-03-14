@@ -105,7 +105,7 @@ public class PlayerListener implements Listener {
 			}
 			
 			// now get them out of there!
-			instanceSet.bootPlayer((Player)event.getEntity());
+			instanceSet.delistPlayer(event.getPlayer());
 		}
 	}
 }
