@@ -1,6 +1,7 @@
 package com.mcnsa.instanceportals.containers;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -49,6 +50,7 @@ public class Instance {
 	
 	public boolean playerDeparting(Player player) {
 		if(departure == null) {
+			//parent.plugin.debug(player.getName() + " not departing since departure is null");
 			return false;
 		}
 		return departure.containsPlayer(player);
@@ -56,50 +58,93 @@ public class Instance {
 	
 	public void bringPlayer(Player player) {
 		if(departure != null && !players.contains(player)) {
-			player.teleport(arrival);
+			//player.teleport(arrival);
+			parent.plugin.transportManager.transport(player, arrival);
 			player.setFallDistance(0f);
 			players.add(player);
+			//parent.plugin.debug("added " + player.getName() + " to instance!");
 		}
 	}
 	
 	public void checkAndHandleDepartures(boolean reset) {
 		// now loop over all the players we have here
-		for(int i = 0; i < players.size(); i++) {
-			if(reset || playerDeparting(players.get(i))) {
-				// teleport them out
-				parent.transportToExit(players.get(i));
-				// and stop tracking them!
-				players.remove(i--);
+		/*if(reset) {
+			parent.plugin.debug("booting " + players.size() + " players due to instance reset");
+		}
+		else {
+			parent.plugin.debug("checking " + players.size() + " players for instance departure");
+		}*/
+		boolean booted = false;
+		Iterator<Player> iterator = players.iterator();
+		ArrayList<Player> removeList = new ArrayList<Player>();
+		while(iterator.hasNext()) {
+			Player player = iterator.next();
+			if(playerDeparting(player)) {
+				parent.transportToExit(player);
+				removeList.add(player);
+				booted = true;
 			}
+			else if(reset) {
+				// teleport them out to the boot exit
+				//parent.plugin.debug("booting " + player.getName() + " from instance for departing");
+				bootPlayerFromInstance(player, true, false);
+				removeList.add(player);
+				booted = true;
+			}
+			/*else {
+				parent.plugin.debug(player.getName() + " not in portal: no action");
+				parent.plugin.debug("\t" + player.getLocation().getBlockX() + ", " + player.getLocation().getBlockY() + ", " + player.getLocation().getBlockZ());
+				parent.plugin.debug("\t\t" + departure.min.getBlockX() + ", " + departure.min.getBlockY() + ", " + departure.min.getBlockZ());
+				parent.plugin.debug("\t\t" + departure.max.getBlockX() + ", " + departure.max.getBlockY() + ", " + departure.max.getBlockZ());
+			}*/
 		}
 		
-		if(players.size() < 1) {
+		// now actually remove the players from the array
+		for(int i = 0; i < removeList.size(); i++) {
+			players.remove(removeList.get(i));
+		}
+		removeList.clear();
+		
+		if(booted && players.size() < 1) {
 			// reset the region!
 			resetRegion();
 		}
 	}
 	
-	public void bootPlayerFromInstance(Player player, boolean transport) {
+	public void bootPlayerFromInstance(Player player, boolean transport, boolean remove) {
 		if(players.contains(player)) {
 			// send them to the entrance
+			if(remove) {
+				players.remove(player);
+			}
 			if(transport) {
+				//parent.plugin.debug("transported " + player.getName() + " to instance set entrance!");
 				parent.transportToEntrance(player);
 			}
-			players.remove(player);
+			//parent.plugin.debug("removed " + player.getName() + " from instance!");
+		}
+	}
+	
+	public void checkReset() {
+		if(players.size() < 1) {
+			resetRegion();
 		}
 	}
 	
 	private void resetRegion() {
 		// reset levers
+		//parent.plugin.debug("resetting instance..");
 		boolean resetPulse = false;
 		for(int x = container.min.getBlockX(); x <= container.max.getBlockX(); x++) {
 			for(int y = container.min.getBlockY(); y <= container.max.getBlockY(); y++) {
 				for(int z = container.min.getBlockZ(); z <= container.max.getBlockX(); z++) {
 					if(parent.plugin.getServer().getWorld(container.worldName).getBlockAt(x, y, z).getType().equals(Material.LEVER)) {
 						byte data = parent.plugin.getServer().getWorld(container.worldName).getBlockAt(x, y, z).getData();
+						//parent.plugin.debug("resetting lever at: " + x + "," + y + "," + z);
 						parent.plugin.getServer().getWorld(container.worldName).getBlockAt(x, y, z).setData((byte)(data & 247), true);
 					}
 					else if(parent.plugin.getServer().getWorld(container.worldName).getBlockAt(x, y, z).getType().equals(Material.CLAY)) {
+						//parent.plugin.debug("setting redstonetorch at: " + x + "," + (y+1) + "," + z);
 						parent.plugin.getServer().getWorld(container.worldName).getBlockAt(x, y + 1, z).setType(Material.REDSTONE_TORCH_ON);
 						resetPulse = true;
 					}
@@ -116,13 +161,14 @@ public class Instance {
 						for(int y = container.min.getBlockY(); y <= container.max.getBlockY(); y++) {
 							for(int z = container.min.getBlockZ(); z <= container.max.getBlockX(); z++) {
 								if(parent.plugin.getServer().getWorld(container.worldName).getBlockAt(x, y, z).getType().equals(Material.CLAY)) {
-									parent.plugin.getServer().getWorld(container.worldName).getBlockAt(x, y + 1, z).setType(Material.REDSTONE_TORCH_OFF);
+									//parent.plugin.debug("clearing redstonetorch at: " + x + "," + (y+1) + "," + z);
+									parent.plugin.getServer().getWorld(container.worldName).getBlockAt(x, y + 1, z).setType(Material.AIR);
 								}
 							}
 						}
 					}
 				}
-			}, 10l);
+			}, 20l);
 		}
 	}
 	

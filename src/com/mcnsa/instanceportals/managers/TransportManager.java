@@ -3,6 +3,7 @@ package com.mcnsa.instanceportals.managers;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import com.mcnsa.instanceportals.InstancePortals;
@@ -18,8 +19,23 @@ public class TransportManager implements Runnable {
 	// keep track of who's in an instance so we can get them out
 	public HashMap<Player, InstanceSet> playersInInstances = new HashMap<Player, InstanceSet>();
 	
+	// and keep track of who we're currently teleporting so we don't interfere with bukkit teleports
+	public ArrayList<Player> inTransit = new ArrayList<Player>();
+	
 	public TransportManager(InstancePortals instance) {
 		plugin = instance;
+	}
+	
+	public boolean inTransit(Player player) {
+		return inTransit.contains(player);
+	}
+	
+	public void transport(Player player, Location location) {
+		if(!inTransit(player)) {
+			inTransit.add(player);
+		}
+		player.teleport(location);
+		inTransit.remove(player);
 	}
 	
 	public boolean portalExists(String name) {

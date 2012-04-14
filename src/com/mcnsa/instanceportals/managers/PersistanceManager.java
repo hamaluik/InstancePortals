@@ -222,6 +222,7 @@ public class PersistanceManager {
 					}
 					catch(Exception e) {
 						plugin.error("failed to read portal: " + e.getMessage());
+						e.printStackTrace();
 					}
 				}
 				
@@ -237,7 +238,7 @@ public class PersistanceManager {
 						ArrayList<Long> minList = (ArrayList<Long>)instanceSets.get(instanceSetName).get("min");
 						ArrayList<Long> maxList = (ArrayList<Long>)instanceSets.get(instanceSetName).get("max");
 						ArrayList<Double> exitList = (ArrayList<Double>)instanceSets.get(instanceSetName).get("exit");
-						ArrayList<Double> bootEntranceList = (ArrayList<Double>)instanceSets.get(instanceSetName).get("bootEntrace");
+						ArrayList<Double> bootEntranceList = (ArrayList<Double>)instanceSets.get(instanceSetName).get("bootEntrance");
 	
 						// TODO: fix the world names
 						Location min = new Location(plugin.getServer().getWorld("world"), minList.get(0).doubleValue(), minList.get(1).doubleValue(), minList.get(2).doubleValue());
@@ -293,12 +294,14 @@ public class PersistanceManager {
 					}
 					catch(Exception e) {
 						plugin.error("failed to read instance set: " + e.getMessage());
+						e.printStackTrace();
 					}
 				}
 			}
 		}
 		catch(Exception e) {
 			plugin.error("failed to read persistance: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 }

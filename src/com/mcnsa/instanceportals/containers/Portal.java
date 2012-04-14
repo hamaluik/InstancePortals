@@ -30,7 +30,8 @@ public class Portal {
 			if(entrance.containsPlayer(players[i])) {
 				// teleport them to the exit
 				//plugin.debug("\ttransporting player to exit...");
-				players[i].teleport(exit);
+				//players[i].teleport(exit);
+				plugin.transportManager.transport(players[i], exit);
 				players[i].setFallDistance(0f);
 			}
 		}

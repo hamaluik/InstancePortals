@@ -85,14 +85,20 @@ public class PortalRegion  {
         
         // now check in each direction
         if (!(l.getBlockX() >= min.getBlockX() && l.getBlockX() <= max.getBlockX())) {
+        	//plugin.debug("\tFailing for not in X");
             return false;
         }
         if (!(l.getBlockZ() >= min.getBlockZ() && l.getBlockZ() <= max.getBlockZ())) {
+        	//plugin.debug("\tFailing for not in Z");
             return false;
         }
         if (!(l.getBlockY() >= min.getBlockY() && l.getBlockY() <= max.getBlockY())) {
+        	//plugin.debug("\tFailing for not in Y");
+        	//plugin.debug("\t\tl.getBlockY() >= min.getBlockY(): " + (l.getBlockY() >= min.getBlockY()));
+        	//plugin.debug("\t\tl.getBlockY() <= max.getBlockY(): " + (l.getBlockY() <= max.getBlockY()));
             return false;
         }
+    	//plugin.debug("\tPassing for being in");
         return true;
 	}
 }

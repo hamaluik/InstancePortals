@@ -234,11 +234,13 @@ public class PlayerManager {
 		
 		// create the instance
 		Instance instance = new Instance(definingInstanceSets.get(player));
+		instance.container = new PortalRegion(plugin, player);
 		instance.departure = new PortalRegion(plugin, player);
 		definingInstances.put(player, instance);
 		
 		// and alert them
 		ColourHandler.sendMessage(player, "&3To define the start of this instance, stand in the spot and type &f/ienter");
+		ColourHandler.sendMessage(player, "&3To define the reset container of this instance, right click on the two corners of your instance container");
 		ColourHandler.sendMessage(player, "&3To define the exit portal of this instance, right click on the two corners of your portal");
 		ColourHandler.sendMessage(player, "&3When you're done, type &f/idone&3. To cancel at any time, type &f/icancel");
 	}
@@ -270,6 +272,10 @@ public class PlayerManager {
 		}
 		
 		// check to make sure it's been fully defined
+		if(!definingInstances.get(player).container.portalDefined()) {
+			ColourHandler.sendMessage(player, "&4Error - your instance container is not fully defined!");
+			return;
+		}
 		if(!definingInstances.get(player).departure.portalDefined()) {
 			ColourHandler.sendMessage(player, "&4Error - your departure portal is not fully defined!");
 			return;
@@ -278,6 +284,10 @@ public class PlayerManager {
 			ColourHandler.sendMessage(player, "&4Error - your instance arrival is not defined!");
 			return;
 		}
+		
+		// make sure the portals are properly ordered
+		definingInstances.get(player).departure.properlyOrder();
+		definingInstances.get(player).container.properlyOrder();
 		
 		// ok, it's defined! add it to the instance set
 		definingInstanceSets.get(player).addInstance(definingInstances.get(player));
@@ -334,6 +344,7 @@ public class PlayerManager {
 		// and inform them
 		ColourHandler.sendMessage(player, "&3To define the entrance portal, right click on the two corners of your portal");
 		ColourHandler.sendMessage(player, "&3To define the exit of this instance set, stand where you want it and type &f/isexit");
+		ColourHandler.sendMessage(player, "&3To define the boot location for this instance set, stand where you want it and type &f/isboot");
 		ColourHandler.sendMessage(player, "&3Then to create an instance hooked into this set using &f/icreate");
 		ColourHandler.sendMessage(player, "&3When you're done, type &f/isdone&3. To cancel at any time, type &f/iscancel");
 	}

@@ -110,7 +110,8 @@ public class InstanceSet {
 		// make sure all our fields are valid
 		if(exit == null) return;
 		
-		player.teleport(exit);
+		//player.teleport(exit);
+		plugin.transportManager.transport(player, exit);
 		player.setFallDistance(0f);
 		
 		plugin.transportManager.playerLeftInstance(player);
@@ -120,7 +121,7 @@ public class InstanceSet {
 		// figure out which instance they're in
 		for(int i = 0; i < instances.size(); i++) {
 			if(instances.get(i).hasPlayer(player)) {
-				instances.get(i).bootPlayerFromInstance(player, true);
+				instances.get(i).bootPlayerFromInstance(player, true, true);
 				return;
 			}
 		}
@@ -130,7 +131,8 @@ public class InstanceSet {
 		// figure out which intance they're in
 		for(int i = 0; i < instances.size(); i++) {
 			if(instances.get(i).hasPlayer(player)) {
-				instances.get(i).bootPlayerFromInstance(player, false);
+				instances.get(i).bootPlayerFromInstance(player, false, true);
+				instances.get(i).checkReset();
 				return;
 			}
 		}
@@ -142,7 +144,8 @@ public class InstanceSet {
 		double meanZ = (entrance.min.getZ() + entrance.max.getZ()) / 2d;
 		
 		player.teleport(new Location(player.getWorld(), meanX, meanY, meanZ));*/
-		player.teleport(bootEntrance);
+		//player.teleport(bootEntrance);
+		plugin.transportManager.transport(player, bootEntrance);
 		player.setFallDistance(0f);
 		
 		plugin.transportManager.playerLeftInstance(player);

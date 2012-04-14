@@ -95,7 +95,7 @@ public class PlayerListener implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void playerTeleported(PlayerTeleportEvent event) {
 		// check to see if they were in an instance
-		if(plugin.transportManager.playerInInstance(event.getPlayer())) {
+		if(!plugin.transportManager.inTransit(event.getPlayer()) && plugin.transportManager.playerInInstance(event.getPlayer())) {
 			// they're in an instance! tp them out so they don't cheat!
 			// get the mean location of the entrance portal
 			InstanceSet instanceSet = plugin.transportManager.playerInstanceSet(event.getPlayer());
@@ -105,6 +105,7 @@ public class PlayerListener implements Listener {
 			}
 			
 			// now get them out of there!
+			//plugin.debug("removing " + event.getPlayer().getName() + " from instance due to teleporting");
 			instanceSet.delistPlayer(event.getPlayer());
 		}
 	}
