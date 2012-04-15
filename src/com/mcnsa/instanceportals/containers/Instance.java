@@ -137,7 +137,7 @@ public class Instance {
 		boolean resetPulse = false;
 		for(int x = container.min.getBlockX(); x <= container.max.getBlockX(); x++) {
 			for(int y = container.min.getBlockY(); y <= container.max.getBlockY(); y++) {
-				for(int z = container.min.getBlockZ(); z <= container.max.getBlockX(); z++) {
+				for(int z = container.min.getBlockZ(); z <= container.max.getBlockZ(); z++) {
 					if(parent.plugin.getServer().getWorld(container.worldName).getBlockAt(x, y, z).getType().equals(Material.LEVER)) {
 						byte data = parent.plugin.getServer().getWorld(container.worldName).getBlockAt(x, y, z).getData();
 						//parent.plugin.debug("resetting lever at: " + x + "," + y + "," + z);
@@ -159,7 +159,7 @@ public class Instance {
 				public void run() {
 					for(int x = container.min.getBlockX(); x <= container.max.getBlockX(); x++) {
 						for(int y = container.min.getBlockY(); y <= container.max.getBlockY(); y++) {
-							for(int z = container.min.getBlockZ(); z <= container.max.getBlockX(); z++) {
+							for(int z = container.min.getBlockZ(); z <= container.max.getBlockZ(); z++) {
 								if(parent.plugin.getServer().getWorld(container.worldName).getBlockAt(x, y, z).getType().equals(Material.CLAY)) {
 									//parent.plugin.debug("clearing redstonetorch at: " + x + "," + (y+1) + "," + z);
 									parent.plugin.getServer().getWorld(container.worldName).getBlockAt(x, y + 1, z).setType(Material.AIR);
