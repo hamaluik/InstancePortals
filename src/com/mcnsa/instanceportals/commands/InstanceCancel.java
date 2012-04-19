@@ -7,7 +7,7 @@ import com.mcnsa.instanceportals.util.ColourHandler;
 import com.mcnsa.instanceportals.util.Command;
 import com.mcnsa.instanceportals.util.CommandInfo;
 
-@CommandInfo(alias = "isave", permission = "instance.create", usage = "", description = "writes all instance sets in memory to file")
+@CommandInfo(alias = "icancel", permission = "instance.create", usage = "", description = "writes all instance sets in memory to file")
 public class InstanceCancel implements Command {
 	private static InstancePortals plugin = null;
 	public InstanceCancel(InstancePortals instance) {
