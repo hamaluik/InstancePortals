@@ -274,7 +274,7 @@ public class PersistanceManager {
 							Location instanceMax = new Location(plugin.getServer().getWorld("world"), instanceMaxList.get(0).doubleValue(), instanceMaxList.get(1).doubleValue(), instanceMaxList.get(2).doubleValue());
 							Location instanceContainerMin = new Location(plugin.getServer().getWorld("world"), instanceContainerMinList.get(0).doubleValue(), instanceContainerMinList.get(1).doubleValue(), instanceContainerMinList.get(2).doubleValue());
 							Location instanceContainerMax = new Location(plugin.getServer().getWorld("world"), instanceContainerMaxList.get(0).doubleValue(), instanceContainerMaxList.get(1).doubleValue(), instanceContainerMaxList.get(2).doubleValue());
-							Location instanceArrival = new Location(plugin.getServer().getWorld("world"), arrivalList.get(0), exitList.get(1), arrivalList.get(2), arrivalList.get(3).floatValue(), (float)arrivalList.get(4).floatValue());
+							Location instanceArrival = new Location(plugin.getServer().getWorld("world"), arrivalList.get(0), arrivalList.get(1), arrivalList.get(2), arrivalList.get(3).floatValue(), (float)arrivalList.get(4).floatValue());
 
 							// ok, create the portal region
 							PortalRegion instanceRegion = new PortalRegion(plugin, "world", instanceMin, instanceMax);

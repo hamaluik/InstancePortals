@@ -402,14 +402,14 @@ public class PlayerManager {
 		// notify them
 		ColourHandler.sendMessage(player, "&2Success, your instance set (&f"+definingInstanceSets.get(player).name+"&2) has been added!");
 		
-		//save all the current instances
-		plugin.persistanceManager.writePersistance();
-		
 		// and stop tracking it
 		if(definingInstances.containsKey(player)) {
 			definingInstances.remove(player);
 		}
 		definingInstanceSets.remove(player);
+		
+		//save all the current instances
+		plugin.persistanceManager.writePersistance();
 	}
 	
 	public void cancelInstanceSetDefinition(Player player) {
