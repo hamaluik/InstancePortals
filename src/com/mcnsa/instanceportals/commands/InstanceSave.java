@@ -32,6 +32,9 @@ public class InstanceSave implements Command {
 		// ok, save all the things.
 		plugin.persistanceManager.writePersistance();
 		
+		//Message them
+		ColourHandler.sendMessage(player, "&cInstances Saved!");
+		
 		return true;
 	}
 }
