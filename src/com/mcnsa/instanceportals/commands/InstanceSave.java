@@ -7,12 +7,13 @@ import com.mcnsa.instanceportals.util.ColourHandler;
 import com.mcnsa.instanceportals.util.Command;
 import com.mcnsa.instanceportals.util.CommandInfo;
 
-@CommandInfo(alias = "isave", permission = "instance.create", usage = "", description = "writes all instance sets in memory to file")
-public class InstanceCancel implements Command {
+@CommandInfo(alias = "icancel", permission = "instance.create", usage = "", description = "cancels definition of your instance")
+public class InstanceSave implements Command {
 	private static InstancePortals plugin = null;
-	public InstanceCancel(InstancePortals instance) {
+	public InstanceSave(InstancePortals instance) {
 		plugin = instance;
 	}
+	
 	
 	@Override
 	public Boolean handle(Player player, String sArgs) {
@@ -21,15 +22,15 @@ public class InstanceCancel implements Command {
 			return false;
 		}
 		
-		// see if they're already defining a portal
-		if(!plugin.playerManager.playerDefiningInstance(player)) {
+		// see if they're defining an instance
+		if(plugin.playerManager.playerDefiningInstance(player)) {
 			// they are! tell them they can't do that!
-			ColourHandler.sendMessage(player, "&cBut you aren't defining an instance!");
+			ColourHandler.sendMessage(player, "&cFinish your instance set before you try to save them all!");
 			return true;
 		}
 		
-		// ok, cancel the definition process!
-		plugin.playerManager.cancelInstanceDefinition(player);
+		// ok, save all the things.
+		plugin.persistanceManager.writePersistance();
 		
 		return true;
 	}
