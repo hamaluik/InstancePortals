@@ -31,6 +31,7 @@ public class InstanceSave implements Command {
 		
 		// ok, save all the things.
 		plugin.persistanceManager.writePersistance();
+		plugin.log("Saving Instances to plugins/InstancePortals/persist.json");
 		
 		//Message them
 		ColourHandler.sendMessage(player, "&aInstances Saved!");

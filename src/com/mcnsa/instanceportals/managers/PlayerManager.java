@@ -199,6 +199,7 @@ public class PlayerManager {
 		
 		//save all the current portals
 		plugin.persistanceManager.writePersistance();
+		plugin.log("Saving Instances to plugins/InstancePortals/persist.json");
 		
 		// and stop tracking it
 		definingPortals.remove(player);
@@ -410,6 +411,7 @@ public class PlayerManager {
 		
 		//save all the current instances
 		plugin.persistanceManager.writePersistance();
+		plugin.log("Saving Instances to plugins/InstancePortals/persist.json");
 	}
 	
 	public void cancelInstanceSetDefinition(Player player) {
