@@ -9,19 +9,46 @@ public class PortalRegion  {
 	@SuppressWarnings("unused")
 	private InstancePortals plugin;
 	public String worldName = new String("world");
+	public String rank = null;
+	public int item = -1;
+	public String itemStr = "-1";
+	public int amt = -1;
+	public String amtStr = "-1";
 	private boolean nextIsMax = false;
 	public Location min, max;
 	
-	public PortalRegion(InstancePortals instance, Player player) {
+	public PortalRegion(InstancePortals instance, Player player, String _rank, String _item, String _amt) {
 		plugin = instance;
 		worldName = player.getWorld().getName();
+		rank = _rank;
+		try{
+			item = Integer.parseInt(_item);
+			itemStr = ""+_item;
+		}catch(Exception e){
+		}
+		try{
+			amt = Integer.parseInt(_amt);
+			amtStr = ""+_amt;
+		}catch(Exception e){
+		}
 	}
 	
-	public PortalRegion(InstancePortals instance, String _worldName, Location _min, Location _max) {
+	public PortalRegion(InstancePortals instance, String _worldName, Location _min, Location _max, String _rank, String _item, String _amt) {
 		plugin = instance;
 		worldName = _worldName;
 		min = _min;
 		max = _max;
+		rank = _rank;
+		try{
+			item = Integer.parseInt(_item);
+			itemStr = ""+_item;
+		}catch(Exception e){
+		}
+		try{
+			amt = Integer.parseInt(_amt);
+			amtStr = ""+_amt;
+		}catch(Exception e){
+		}
 	}
 	
 	public boolean nextIsMax() {

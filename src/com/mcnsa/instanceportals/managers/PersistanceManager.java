@@ -59,6 +59,11 @@ public class PersistanceManager {
 				entranceMax.add(plugin.transportManager.portals.get(i).entrance.max.getBlockX());
 				entranceMax.add(plugin.transportManager.portals.get(i).entrance.max.getBlockY());
 				entranceMax.add(plugin.transportManager.portals.get(i).entrance.max.getBlockZ());
+				// the entrance requirements
+				JSONArray entranceReqs = new JSONArray();
+				entranceReqs.add(plugin.transportManager.portals.get(i).entrance.rank.toLowerCase());
+				entranceReqs.add(plugin.transportManager.portals.get(i).entrance.itemStr);
+				entranceReqs.add(plugin.transportManager.portals.get(i).entrance.amtStr);
 				
 				// and now the exit
 				JSONArray exit = new JSONArray();
@@ -71,6 +76,7 @@ public class PersistanceManager {
 				portalObj.put("world", plugin.transportManager.portals.get(i).entrance.worldName);
 				portalObj.put("min", entranceMin);
 				portalObj.put("max", entranceMax);
+				portalObj.put("reqs", entranceReqs);
 				portalObj.put("exit", exit);
 				
 				portalsObj.put(plugin.transportManager.portals.get(i).name, portalObj);
@@ -204,14 +210,19 @@ public class PersistanceManager {
 						String worldName = (String)portals.get(portalName).get("world");
 						ArrayList<Long> minList = (ArrayList<Long>)portals.get(portalName).get("min");
 						ArrayList<Long> maxList = (ArrayList<Long>)portals.get(portalName).get("max");
+						ArrayList<String> reqList = (ArrayList<String>)portals.get(portalName).get("reqs");
 						ArrayList<Double> exitList = (ArrayList<Double>)portals.get(portalName).get("exit");
 	
 						Location min = new Location(plugin.getServer().getWorld(worldName), minList.get(0).doubleValue(), minList.get(1).doubleValue(), minList.get(2).doubleValue());
 						Location max = new Location(plugin.getServer().getWorld(worldName), maxList.get(0).doubleValue(), maxList.get(1).doubleValue(), maxList.get(2).doubleValue());
 						Location exit = new Location(plugin.getServer().getWorld(worldName), exitList.get(0), exitList.get(1), exitList.get(2), exitList.get(3).floatValue(), (float)exitList.get(4).floatValue());
 						
+						String rank = new String(reqList.get(0));
+						String item = reqList.get(1);
+						String amt = reqList.get(2);
+						
 						// ok, create the portal region
-						PortalRegion region = new PortalRegion(plugin, worldName, min, max);
+						PortalRegion region = new PortalRegion(plugin, worldName, min, max, rank, item, amt);
 						
 						// now set things in the portal
 						portal.entrance = region;
@@ -247,7 +258,7 @@ public class PersistanceManager {
 						Location bootEntrance = new Location(plugin.getServer().getWorld("world"), bootEntranceList.get(0), bootEntranceList.get(1), bootEntranceList.get(2), bootEntranceList.get(3).floatValue(), (float)bootEntranceList.get(4).floatValue());
 						
 						// ok, create the portal region
-						PortalRegion region = new PortalRegion(plugin, "world", min, max);
+						PortalRegion region = new PortalRegion(plugin, "world", min, max, null, null, null);
 						
 						// now set things in the portal
 						instanceSet.entrance = region;
@@ -277,8 +288,8 @@ public class PersistanceManager {
 							Location instanceArrival = new Location(plugin.getServer().getWorld("world"), arrivalList.get(0), arrivalList.get(1), arrivalList.get(2), arrivalList.get(3).floatValue(), (float)arrivalList.get(4).floatValue());
 
 							// ok, create the portal region
-							PortalRegion instanceRegion = new PortalRegion(plugin, "world", instanceMin, instanceMax);
-							PortalRegion instanceContainerRegion = new PortalRegion(plugin, "world", instanceContainerMin, instanceContainerMax);
+							PortalRegion instanceRegion = new PortalRegion(plugin, "world", instanceMin, instanceMax, null, null, null);
+							PortalRegion instanceContainerRegion = new PortalRegion(plugin, "world", instanceContainerMin, instanceContainerMax, null, null, null);
 							
 							// now setup the instance
 							instance.setArrival(instanceArrival);

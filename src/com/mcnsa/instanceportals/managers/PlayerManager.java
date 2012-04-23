@@ -141,7 +141,7 @@ public class PlayerManager {
 		return definingPortals.containsKey(player);
 	}
 	
-	public void startPortalDefinition(Player player, String name) {
+	public void startPortalDefinition(Player player, String name, String rank, String item, String amt) {
 		// firt make sure that portal doesn't exist
 		if(plugin.transportManager.portalExists(name)) {
 			ColourHandler.sendMessage(player, "&4Error - a portal already exists with that name!");
@@ -153,7 +153,7 @@ public class PlayerManager {
 		}
 		
 		Portal portal = new Portal(plugin, name);
-		portal.entrance = new PortalRegion(plugin, player);
+		portal.entrance = new PortalRegion(plugin, player, rank, item, amt);
 		definingPortals.put(player, portal);
 		
 		// and inform them
@@ -238,8 +238,8 @@ public class PlayerManager {
 		
 		// create the instance
 		Instance instance = new Instance(definingInstanceSets.get(player));
-		instance.container = new PortalRegion(plugin, player);
-		instance.departure = new PortalRegion(plugin, player);
+		instance.container = new PortalRegion(plugin, player, null, null, null);
+		instance.departure = new PortalRegion(plugin, player, null, null, null);
 		definingInstances.put(player, instance);
 		
 		// and alert them
@@ -342,7 +342,7 @@ public class PlayerManager {
 		
 		// create the instance set
 		InstanceSet set = new InstanceSet(plugin, name, max);
-		set.entrance = new PortalRegion(plugin, player);
+		set.entrance = new PortalRegion(plugin, player, null, null, null);
 		definingInstanceSets.put(player, set);
 		
 		// and inform them
